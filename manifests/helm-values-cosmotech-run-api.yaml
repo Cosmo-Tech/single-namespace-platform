@@ -1,0 +1,131 @@
+api:
+  servletContextPath: /
+  version: ${URL_SUFFIX}
+  multiTenant: true
+  serviceMonitor:
+    name: "${NAME}-${NAMESPACE}"
+    enabled: true
+    namespace: ${NAMESPACE_MONITORING}
+  tlsTruststore:
+    enabled: false
+
+argo:
+  imageCredentials:
+    registry: ${SIMU_REGISTRY_URL}
+    username: ${SIMU_REGISTRY_USERNAME}
+    password: ${SIMU_REGISTRY_PASSWORD}
+
+config:
+  csm:
+    platform:
+      namespace: ${NAMESPACE}
+      api:
+        mcp:
+          dashboard-enabled: ${MCP_DASHBOARD_ENABLED}
+          enabled: ${MCP_ENABLED}
+          paths-to-exclude: ${MCP_PATHS_TO_EXCLUDE}
+      authorization:
+        allowed-tenants: ${NAMESPACE}
+      containerRegistry:
+        scheme: https
+        host: ${SIMU_REGISTRY_URL}
+        username: ${SIMU_REGISTRY_USERNAME}
+        password: ${SIMU_REGISTRY_PASSWORD}
+      identityProvider:
+        audience: account
+        code: keycloak
+        serverBaseUrl: https://${CLUSTER_DOMAIN}/keycloak
+        authorizationUrl: https://${CLUSTER_DOMAIN}/keycloak/realms/${NAMESPACE}/protocol/openid-connect/auth
+        tokenUrl: https://${CLUSTER_DOMAIN}/keycloak/realms/${NAMESPACE}/protocol/openid-connect/token
+        defaultScopes:
+          openid: "OpenId Scope"
+        identity:
+          clientId: ${KEYCLOAK_API_CLIENT_ID}
+          clientSecret: ${KEYCLOAK_API_CLIENT_SECRET}
+          tenantId: ${NAMESPACE}
+        admin:
+          clientId: ${KEYCLOAK_ADMIN_CLIENT_ID}
+          clientSecret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+      argo:
+        base-uri: http://argo-workflows-server.${NAMESPACE}.svc.cluster.local:2746
+        workflows:
+          namespace: ${NAMESPACE}
+          service-account-name: argo-workflows
+          requests:
+            storage: 20Gi
+      s3:
+        endpointUrl: ${S3_ENDPOINT}
+        bucketName: ${S3_BUCKET}
+        accessKeyId: ${S3_USERNAME}
+        secretAccessKey: ${S3_PASSWORD}
+      databases:
+        resources:
+          host: redis-master.${NAMESPACE}.svc.cluster.local
+          port: ${REDIS_PORT}
+          username: default
+          password: ${REDIS_PASSWORD}
+        data:
+          host: ${DB_HOST}
+          port: 5432
+          database: ${DB_NAME}
+          reader:
+            username: ${DB_READER_USERNAME}
+            password: ${DB_READER_PASSWORD}
+          writer:
+            username: ${DB_WRITER_USERNAME}
+            password: ${DB_WRITER_PASSWORD}
+          admin:
+            username: ${DB_ADMIN_USERNAME}
+            password: ${DB_ADMIN_PASSWORD}
+      tasks:
+        cleanUpArchivedRunners:
+          delay: 300
+          enabled: true
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod-${NAMESPACE}
+  hosts:
+    - host: ${CLUSTER_DOMAIN}
+  tls:
+    - secretName: letsencrypt-prod-${NAMESPACE}
+      hosts:
+        - "${CLUSTER_DOMAIN}"
+
+replicaCount: 1
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    memory: 1Gi
+
+nodeSelector:
+  cosmotech.com/tier: services
+
+tolerations:
+- key: vendor
+  operator: Equal
+  value: cosmotech
+  effect: NoSchedule
+
+image:
+  repository: ${REGISTRY}/${COSMOTECH_RUN_API_IMAGE_NAME}
+  pullSecret: ${REGISTRY_AUTH_SECRET}
+  tag: ${COSMOTECH_RUN_API_IMAGE_TAG}
+  pullPolicy: IfNotPresent

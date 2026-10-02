@@ -1,0 +1,63 @@
+ingress:
+  enabled: true
+keycloak:
+  realmUrl: "https://${CLUSTER_DOMAIN}/keycloak/realms/${NAMESPACE}"
+name: "${WEBAPP_NAME}"
+powerbi:
+  tenantId: "${POWERBI_APP_TENANT_ID}"
+  clientId: "${POWERBI_APP_CLIENT_ID}"
+  clientSecret: "${POWERBI_APP_SECRET}"
+superset:
+  apiUrl: "http://superset-web.superset.svc.cluster.local/api/v1"
+  superuser:
+    username: "admin"
+    password: "${SUPERSET_SUPERUSER_PASSWORD}"
+cosmotech:
+  apiUrl: "${COSMOTECH_API_URL}"
+tolerations:
+- key: "vendor"
+  operator: "Equal"
+  value: "cosmotech"
+  effect: "NoSchedule"
+nodeSelector:
+  "cosmotech.com/tier": "services"
+resources:
+  limits:
+    cpu: "1000m"
+    memory: "256Mi"
+  requests:
+    cpu: "200m"
+    memory: "128Mi"
+webapp:
+  domainName: "${CLUSTER_DOMAIN}"
+  functions:
+    image:
+      pullPolicy: "Always"
+      repository: "${IMAGE_REPOSITORY_FUNCTIONS}"
+      # Update this tag with each release --> https://github.com/Cosmo-Tech/azure-sample-webapp/pkgs/container/azure-sample-webapp%2Fwebapp-server/674832208?tag=v7.0.0-rc1-vanilla
+      tag: "${IMAGE_TAG_FUNCTIONS}"
+      pullSecret: "${IMAGE_PULL_SECRET_FUNCTIONS}"
+    # Tolerations for hybrid deployment (cloud + on-premises):
+    # On on-premises nodes, add a taint `vendor=tech:NoSchedule`
+    tolerations:
+    - key: "vendor"
+      operator: "Equal"
+      value: "cosmotech"
+      effect: "NoSchedule"
+    nodeSelector:
+      "cosmotech.com/tier": "services"
+  publicUrl: "/${NAMESPACE}/${WEBAPP_NAME}"
+  server:
+    image:
+      pullPolicy: Always
+      repository: "${IMAGE_REPOSITORY_SERVER}"
+      # Update this tag with each release --> https://github.com/Cosmo-Tech/azure-sample-webapp/pkgs/container/azure-sample-webapp%2Fwebapp-server/674832208?tag=v7.0.0-rc1-vanilla
+      tag: "${IMAGE_TAG_SERVER}"
+      pullSecret: "${IMAGE_PULL_SECRET_SERVER}"
+    tolerations:
+    - key: "vendor"
+      operator: "Equal"
+      value: "cosmotech"
+      effect: "NoSchedule"
+    nodeSelector:
+      "cosmotech.com/tier": "services"
