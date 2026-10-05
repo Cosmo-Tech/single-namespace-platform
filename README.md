@@ -69,18 +69,24 @@
                 * Enabled = *true*
         > On nexts step, we assume the created realm is selected
         * Create clients
-            * Cosmo Tech Run API client (backend)
-                * Go on Clients > Create client
+            * For each entry in the table, follow next steps \
+                | Client                                | Usage                                         | Auth flows
+                | `cosmotech-client-admin`              | Cosmo Tech Run API (Keycloak admin access)    | `Standard flow`
+                | `cosmotech-client-api`                | Cosmo Tech Run API (backend)                  | `Standard flow`
+                | `cosmotech-client-web`                | Cosmo Tech Run API (Swagger)                  | `Standard flow`, `Service account roles`
+                | `cosmotech-client-babylon`            | Babylon usage                                 | `Standard flow`, `Service account roles`
+                | `cosmotech-client-business-webapp`    | Cosmo Tech business webapp                    | `Standard flow`
+                * Go to Clients > Create client
                     * General settings
-                        * Client ID = `cosmotech-client-api`
-                        * Name      = `cosmotech-client-api`
-                        * Always display in UI = *false*
+                        * Client ID             = *name*
+                        * Name                  = *name*
+                        * Always display in UI  = *false*
                     * Capability config
-                        * Client authentication = *true*
-                        * Authorization = *false*
-                        * Authentication flow = `Standard flow` only
-                        * Require PKCE = *false*
-                        * Require DPoP bound tokens = *false*
+                        * Client authentication         = *true*
+                        * Authorization                 = *false*
+                        * Authentication flow           = *See **auth flows** section in the table*
+                        * Require PKCE                  = *false*
+                        * Require DPoP bound tokens     = *false*
                     * Login settings
                         * Root URL = *cluster URL*
                             > example: https://platform.example.com
@@ -93,20 +99,30 @@
                         * Web origins = `+`
                         * Admin URL = *empty*
                 * Click on "save"
-            * Cosmo Tech Run API client (Swagger access)
-                * Go on Clients > Create client
-                    * Client ID = `cosmotech-client-web`
-                    * Name      = `cosmotech-client-web`
-            * Cosmo Tech Business Webapp client
-                * Go on Clients > Create client
-                    * Client ID = `cosmotech-client-business-webapp`
-                    * Name      = `cosmotech-client-business-webapp`
+        * Create client mapper
+            * Go to Clients scope > `profile` > Mappers > Add mapper > By configuration > `Group Membership`
+                * name                              = `cosmotech-api-groups`
+                * Token Claim Name                  = `groups`
+                * Full group path                   = *false*
+                * Add to ID token                   = *true*
+                * Add to access token               = *true*
+                * Add to lightweight access token   = *false*
+                * Add to userinfo                   = *true*
+                * Add to token introspection        = *true*
+
         * Create roles & groups
-            * platform.admin
-            * organization.user
+            * For each entry in the table, follow next steps \
+                | Client                | Usage
+                | `Platform.Admin`      | Full permission
+                | `Organization.User`   | Grant authentication over tenant objects, working in pair with ACL
+                * Go to Realm roles > Create role
+                    * Role name = *name*
         * Create users
-            * 
-        * Create client mappers
+            * Go to users > Create new user
+                * Fill user informations
+                * Click on "Create"
+                * Set a password (go to the user > Credentials > Set password)
+                * Asssign a Cosmo Tech role > (go to the user > Role mapping > Assign role > Realm role)
 
 * Create Cosmo Tech Run API
     > Your Cosmo Tech administrator will provide the right VERSION & TAG to use

@@ -34,11 +34,8 @@ webapp:
     image:
       pullPolicy: "Always"
       repository: "${IMAGE_REPOSITORY_FUNCTIONS}"
-      # Update this tag with each release --> https://github.com/Cosmo-Tech/azure-sample-webapp/pkgs/container/azure-sample-webapp%2Fwebapp-server/674832208?tag=v7.0.0-rc1-vanilla
       tag: "${IMAGE_TAG_FUNCTIONS}"
       pullSecret: "${IMAGE_PULL_SECRET_FUNCTIONS}"
-    # Tolerations for hybrid deployment (cloud + on-premises):
-    # On on-premises nodes, add a taint `vendor=tech:NoSchedule`
     tolerations:
     - key: "vendor"
       operator: "Equal"
@@ -51,7 +48,6 @@ webapp:
     image:
       pullPolicy: Always
       repository: "${IMAGE_REPOSITORY_SERVER}"
-      # Update this tag with each release --> https://github.com/Cosmo-Tech/azure-sample-webapp/pkgs/container/azure-sample-webapp%2Fwebapp-server/674832208?tag=v7.0.0-rc1-vanilla
       tag: "${IMAGE_TAG_SERVER}"
       pullSecret: "${IMAGE_PULL_SECRET_SERVER}"
     tolerations:
