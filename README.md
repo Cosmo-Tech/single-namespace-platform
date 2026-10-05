@@ -57,20 +57,25 @@
         ```
         helm -n $NAMESPACE upgrade --install keycloak-postgresql oci://registry.cosmotech.com/proxy-chainguard-charts/postgresql --values manifests/helm-values-postgresql.yaml --version $KEYCLOAK_PSQL_CHART_VERSION
         ```
+
     * Keycloak itself
         > You can also use an existing Keycloak instance
         ```
         helm -n $NAMESPACE upgrade --install keycloak-postgresql oci://registry.cosmotech.com/proxy-chainguard-charts/postgresql --values manifests/helm-values-keycloak.yaml --version $KEYCLOAK_CHART_VERSION
         ```
+
     * Keycloak configuration
         * Create a realm
             * Go on Keycloak > Manage realms > Create realm
                 * Realm name = `MY_COSMOTECH_REALM`
                 * Enabled = *true*
+
         > On nexts step, we assume the created realm is selected
+
         * Create clients
-            * For each entry in the table, follow next steps \
+            * For each entry in the table, follow next steps
                 | Client                                | Usage                                         | Auth flows
+                |---                                    |---                                            |---
                 | `cosmotech-client-admin`              | Cosmo Tech Run API (Keycloak admin access)    | `Standard flow`
                 | `cosmotech-client-api`                | Cosmo Tech Run API (backend)                  | `Standard flow`
                 | `cosmotech-client-web`                | Cosmo Tech Run API (Swagger)                  | `Standard flow`, `Service account roles`
@@ -99,6 +104,7 @@
                         * Web origins = `+`
                         * Admin URL = *empty*
                 * Click on "save"
+
         * Create client mapper
             * Go to Clients scope > `profile` > Mappers > Add mapper > By configuration > `Group Membership`
                 * name                              = `cosmotech-api-groups`
@@ -111,18 +117,22 @@
                 * Add to token introspection        = *true*
 
         * Create roles & groups
-            * For each entry in the table, follow next steps \
+            * For each entry in the table, follow next steps
                 | Client                | Usage
+                |---                    |---
                 | `Platform.Admin`      | Full permission
-                | `Organization.User`   | Grant authentication over tenant objects, working in pair with ACL
+                | `Organization.User`   | Grant authentication, working in pair with objects ACL
                 * Go to Realm roles > Create role
                     * Role name = *name*
+
         * Create users
             * Go to users > Create new user
                 * Fill user informations
                 * Click on "Create"
                 * Set a password (go to the user > Credentials > Set password)
                 * Asssign a Cosmo Tech role > (go to the user > Role mapping > Assign role > Realm role)
+
+        > Note: you can connect Keycloak with your own IdP to benefit SSO, sync your users etc...
 
 * Create Cosmo Tech Run API
     > Your Cosmo Tech administrator will provide the right VERSION & TAG to use
