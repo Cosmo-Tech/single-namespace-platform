@@ -74,13 +74,13 @@
 
         * Create clients
             * For each entry in the table, follow next steps
-                | Client                                | Usage                                         | Auth flows
-                |---                                    |---                                            |---
-                | `cosmotech-client-admin`              | Cosmo Tech Run API (Keycloak admin access)    | `Standard flow`
-                | `cosmotech-client-api`                | Cosmo Tech Run API (backend)                  | `Standard flow`
-                | `cosmotech-client-web`                | Cosmo Tech Run API (Swagger)                  | `Standard flow`, `Service account roles`
-                | `cosmotech-client-babylon`            | Babylon usage                                 | `Standard flow`, `Service account roles`
-                | `cosmotech-client-business-webapp`    | Cosmo Tech business webapp                    | `Standard flow`
+| Client                                | Usage                                         | Auth flows
+|---                                    |---                                            |---
+| `cosmotech-client-admin`              | Cosmo Tech Run API (Keycloak admin access)    | `Standard flow`
+| `cosmotech-client-api`                | Cosmo Tech Run API (backend)                  | `Standard flow`
+| `cosmotech-client-web`                | Cosmo Tech Run API (Swagger)                  | `Standard flow`, `Service account roles`
+| `cosmotech-client-babylon`            | Babylon usage                                 | `Standard flow`, `Service account roles`
+| `cosmotech-client-business-webapp`    | Cosmo Tech business webapp                    | `Standard flow`
                 * Go to Clients > Create client
                     * General settings
                         * Client ID             = *name*
@@ -118,10 +118,10 @@
 
         * Create roles & groups
             * For each entry in the table, follow next steps
-                | Client                | Usage
-                |---                    |---
-                | `Platform.Admin`      | Full permission
-                | `Organization.User`   | Grant authentication, working in pair with objects ACL
+| Client                | Usage
+|---                    |---
+| `Platform.Admin`      | Full permission
+| `Organization.User`   | Grant authentication, working in pair with objects ACL
                 * Go to Realm roles > Create role
                     * Role name = *name*
 
@@ -131,6 +131,8 @@
                 * Click on "Create"
                 * Set a password (go to the user > Credentials > Set password)
                 * Asssign a Cosmo Tech role > (go to the user > Role mapping > Assign role > Realm role)
+
+<br>
 
         > Note: you can connect Keycloak with your own IdP to benefit SSO, sync your users etc...
 
